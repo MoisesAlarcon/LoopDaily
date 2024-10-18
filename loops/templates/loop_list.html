@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Asegurate de cargar el 'static' template tag al principio -->
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <!-- Titulo animado de la lista de loops -->
+    <h1 id="loop-text" class="text-primary"></h1>
+</div>
+
+<div class="container mt-5">
+    <!-- Formulario de filtros -->
+    <form method="get" class="row mb-4 justify-content-center">
+        <!-- Primera fila con 4 recuadros -->
+        <div class="col-md-3">
+            <!-- Campo de texto para filtrar por título -->
+            <label for="title" class="form-label">Título:</label>
+            <input type="text" name="title" id="title" class="form-control" value="{{ request.GET.title }}">
+        </div>
+        <div class="col-md-3">
+            <!-- Campo de texto para filtrar por BPM mínimo -->
+            <label for="bpm_min" class="form-label">BPM Mínimo:</label>
+            <input type="number" name="bpm_min" id="bpm_min" class="form-control" value="{{ request.GET.bpm_min }}">
+        </div>
+        <div class="col-md-3">
+            <!-- Campo de texto para filtrar por BPM máximo -->
+            <label for="bpm_max" class="form-label">BPM Máximo:</label>
+            <input type="number" name="bpm_max" id="bpm_max" class="form-control" value="{{ request.GET.bpm_max }}">
+        </div>
+        <div class="col-md-3">
+            <!-- Campo de selección para filtrar por escala musical -->
+            <label for="escala" class="form-label">Escala:</label>
+            <select name="escala" id="escala" class="form-select">
+                <option value="">Selecciona una escala</option>
+                {% for escala in escalas %}
+                <!-- Opción para cada escala disponible -->
+                <option value="{{ escala }}" {% if request.GET.escala == escala %}selected{% endif %}>{{ escala }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Segunda fila con 3 recuadros -->
+        <div class="col-md-3">
+            <!-- Campo de selección para filtrar por categoría -->
+            <label for="categoria" class="form-label">Categoría:</label>
+            <select name="categoria" id="categoria" class="form-select">
+                <option value="">Selecciona una categoría</option>
+                {% for categoria in categorias %}
+                <!-- Opción para cada categoría disponible -->
+                <option value="{{ categoria }}" {% if request.GET.categoria == categoria %}selected{% endif %}>{{ categoria }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <!-- Campo de texto para filtrar por propietario (nombre de usuario) -->
+            <label for="propietario" class="form-label">Propietario:</label>
+            <input type="text" name="propietario" id="propietario" class="form-control" value="{{ request.GET.propietario }}">
+        </div>
+        <div class="col-md-3">
+            <!-- Campo de selección para ordenar los resultados -->
+            <label for="ordenar_por" class="form-label">Ordenar por:</label>
+            <select name="ordenar_por" id="ordenar_por" class="form-select">
+                <option value="">Selecciona una opción</option>
+                <!-- Opciones para ordenar por cantidad de likes, comentarios o fecha -->
+                <option value="likes" {% if request.GET.ordenar_por == 'likes' %}selected{% endif %}>Cantidad de Likes</option>
+                <option value="comentarios" {% if request.GET.ordenar_por == 'comentarios' %}selected{% endif %}>Cantidad de Comentarios</option>
+                <option value="fecha" {% if request.GET.ordenar_por == 'fecha' %}selected{% endif %}>Fecha Reciente</option>
+            </select>
+        </div>
+
+        <!-- Tercera fila con el botón centrado -->
+        <div class="col-12 mt-4 d-flex justify-content-center">
+            <!-- Botón para aplicar los filtros -->
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+        </div>
+    </form>
+
+    <!-- Lista de loops -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Título</th>
+                <th scope="col">Descripción</th>
+                <th scope="col">BPM</th>
+                <th scope="col">Escala</th>
+                <th scope="col">Categoría</th>
+                <th scope="col">Propietario</th>
+                <th scope="col">Reproducir</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Itera sobre cada loop disponible y genera una fila en la tabla -->
+            {% for loop in loops %}
+            <tr>
+                <!-- Muestra la imagen de perfil del propietario junto al título del loop -->
+                <td>
+                    {% if loop.user.userprofile.profile_picture %}
+                        <img src="{{ loop.user.userprofile.profile_picture.url }}" class="img-thumbnail" style="width: 50px; height: 50px; margin-right: 10px;">
+                    {% else %}
+                        <img src="{% static 'default_profile.png' %}" class="img-thumbnail" style="width: 50px; height: 50px; margin-right: 10px;">
+                    {% endif %}
+                    <a href="{% url 'loop_detail' loop.id %}">{{ loop.title }}</a>
+                </td>
+                <td>{{ loop.description }}</td>
+                <td>{{ loop.bpm }}</td>
+                <td>{{ loop.escala }}</td>
+                <td>{{ loop.categoria }}</td>
+                <!-- Enlace al perfil del propietario del loop -->
+                <td><a href="{% url 'profile' %}?user_id={{ loop.user.id }}">{{ loop.user.username }}</a></td>
+                <td>
+                    <!-- Reproductor de audio para el loop -->
+                    <audio controls class="audio-player">
+                        <source src="{{ loop.file.url }}" type="audio/wav">
+                        Tu navegador no soporta la reproducción de audio.
+                    </audio>
+                </td>
+                <td>
+                    <!-- Botón para eliminar el loop, visible solo para el propietario -->
+                    <a href="{% url 'delete_loop' loop.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const textElement = document.getElementById('loop-text');
+        const text = "LISTA DE LOOPS";
+        let index = 0;
+        let isAdding = true;
+
+        function playText() {
+            textElement.innerText = text.slice(0, index);
+
+            if (isAdding) {
+                if (index < text.length) {
+                    index++;
+                    setTimeout(playText, 120);
+                } else {
+                    isAdding = false;
+                    setTimeout(playText, 1000);
+                }
+            } else {
+                if (index > 0) {
+                    index--;
+                    setTimeout(playText, 100);
+                } else {
+                    isAdding = true;
+                    setTimeout(playText, 200);
+                }
+            }
+        }
+
+        playText();
+    });
+
+    // Obtener todos los elementos de audio
+    const audioPlayers = document.querySelectorAll('.audio-player');
+
+    // Agregar evento a cada elemento de audio
+    audioPlayers.forEach(player => {
+        player.addEventListener('play', () => {
+            // Pausar todos los demás reproductores cuando se reproduce uno nuevo
+            audioPlayers.forEach(otherPlayer => {
+                if (otherPlayer !== player) {
+                    otherPlayer.pause();
+                    otherPlayer.currentTime = 0; // Opcional: Reiniciar el audio al inicio
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

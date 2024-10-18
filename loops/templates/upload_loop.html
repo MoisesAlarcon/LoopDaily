@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block image %}
+<!-- Contenedor para la imagen de portada -->
+<div class="container image-container">
+    <!-- Carga y muestra la imagen de portada usando la etiqueta 'static' de Django -->
+    <img src="{% static 'images/portadaUpload.webp' %}" alt="portadaUpload" class="img-fluid">
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Contenedor principal con un margen superior -->
+<div class="container mt-5">
+    <!-- Fila que centra el contenido horizontalmente -->
+    <div class="row justify-content-center">
+        <!-- Columna que se ajusta en tamaño mediano y grande, ocupando 8 columnas en un grid de Bootstrap -->
+        <div class="col-md-8">
+            <!-- Tarjeta personalizada para el formulario -->
+            <div class="card card-custom">
+                <div class="card-body">
+                    <!-- Titulo del formulario con estilo centrado y personalizado -->
+                    <h2 id="upload-loop-text" class="text-center text-primary-custom mb-4" style="min-height: 1.5em;"></h2>
+                    <!-- Formulario para subir un nuevo loop -->
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %} <!-- Token de seguridad CSRF para proteger el formulario -->
+                        
+                        <!-- Campo para el titulo del loop -->
+                        <div class="mb-4">
+                            <label for="title" class="form-label">Titulo:</label>
+                            <input type="text" class="form-control form-control-lg" name="title" id="title" placeholder="Introduce un titulo para tu loop" required>
+                        </div>
+
+                        <!-- Campo para la descripcion del loop -->
+                        <div class="mb-4">
+                            <label for="description" class="form-label">Descripcion:</label>
+                            <textarea class="form-control form-control-lg" name="description" id="description" rows="3" placeholder="Describe tu loop" required></textarea>
+                        </div>
+
+                        <!-- Fila con dos columnas para BPM y Escala -->
+                        <div class="mb-4 row">
+                            <div class="col-md-6">
+                                <label for="bpm" class="form-label">BPM:</label>
+                                <input type="number" class="form-control form-control-lg" name="bpm" id="bpm" value="120" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="escala" class="form-label">Escala:</label>
+                                <input type="text" class="form-control form-control-lg" name="escala" id="escala" value="Fm" required>
+                            </div>
+                        </div>
+
+                        <!-- Campo para la categoria del loop -->
+                        <div class="mb-4">
+                            <label for="categoria" class="form-label">Categoria:</label>
+                            <input type="text" class="form-control form-control-lg" name="categoria" id="categoria" value="Trap" required>
+                        </div>
+
+                        <!-- Campo para el archivo de audio -->
+                        <div class="mb-4">
+                            <label for="file" class="form-label">Archivo:</label>
+                            <input type="file" class="form-control form-control-lg" name="file" id="file" required>
+                            <small class="form-text text-muted">Formatos soportados: WAV, MP3</small>
+                        </div>
+
+                        <!-- Boton para enviar el formulario y subir el loop -->
+                        <button type="submit" class="btn btn-primary btn-custom">Subir</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Animación del texto "Subir Nuevo Loop"
+    const textElement = document.getElementById('upload-loop-text');
+    const text = "SUBIR NUEVO LOOP";
+    let index = 0;
+    let isAdding = true;
+
+    function playText() {
+        textElement.innerText = text.slice(0, index);
+
+        if (isAdding) {
+            if (index < text.length) {
+                index++;
+                setTimeout(playText, 120);
+            } else {
+                isAdding = false;
+                setTimeout(playText, 1000);
+            }
+        } else {
+            if (index > 0) {
+                index--;
+                setTimeout(playText, 100);
+            } else {
+                isAdding = true;
+                setTimeout(playText, 200);
+            }
+        }
+    }
+
+    playText();
+  });
+</script>
+{% endblock %}
