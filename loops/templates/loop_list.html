@@ -3,47 +3,53 @@
 
 {% block content %}
 <div class="container mt-5 text-center">
-    <!-- Titulo animado de la lista de loops -->
+    <!-- Titulo animado de la lista de loops 
     <h1 id="loop-text" class="text-primary"></h1>
+    -->
 </div>
+
+<div class="swiper mySwiper">
+    <div class="swiper-wrapper">
+      <!-- Itera sobre cada loop disponible para generar un slide -->
+      {% for loop in loops %}
+      <div class="swiper-slide">
+        <!-- Contenido de cada slide -->
+        <div class="slide-content">
+          <!-- Imagen del perfil del propietario del loop -->
+          {% if loop.user.userprofile.profile_picture %}
+          <img src="{{ loop.user.userprofile.profile_picture.url }}" alt="Profile Picture" style="width: 100%;">
+          {% else %}
+          <img src="{% static 'default_profile.png' %}" alt="Default Profile Picture">
+          {% endif %}
+          <!-- Título del loop -->
+          <h4>{{ loop.title }}</h4>
+          <!-- Nombre del autor -->
+          <p>{{ loop.user.username }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <!-- Paginación del slider -->
+    <div class="swiper-pagination"></div>
+    <!-- Botones de navegación -->
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+  </div>
 
 <div class="container mt-5">
     <!-- Formulario de filtros -->
-    <form method="get" class="row mb-4 justify-content-center">
+    <form method="get" class="row mb-4 justify-content-left">
         <!-- Primera fila con 4 recuadros -->
         <div class="col-md-3">
             <!-- Campo de texto para filtrar por título -->
-            <label for="title" class="form-label">Título:</label>
-            <input type="text" name="title" id="title" class="form-control" value="{{ request.GET.title }}">
+            <!-- <label for="title" class="form-label">Título:</label> -->
+            <input type="text" placeholder="Trending" name="title" id="title" class="form-control" value="{{ request.GET.title }}">
         </div>
-        <div class="col-md-3">
-            <!-- Campo de texto para filtrar por BPM mínimo -->
-            <label for="bpm_min" class="form-label">BPM Mínimo:</label>
-            <input type="number" name="bpm_min" id="bpm_min" class="form-control" value="{{ request.GET.bpm_min }}">
-        </div>
-        <div class="col-md-3">
-            <!-- Campo de texto para filtrar por BPM máximo -->
-            <label for="bpm_max" class="form-label">BPM Máximo:</label>
-            <input type="number" name="bpm_max" id="bpm_max" class="form-control" value="{{ request.GET.bpm_max }}">
-        </div>
-        <div class="col-md-3">
-            <!-- Campo de selección para filtrar por escala musical -->
-            <label for="escala" class="form-label">Escala:</label>
-            <select name="escala" id="escala" class="form-select">
-                <option value="">Selecciona una escala</option>
-                {% for escala in escalas %}
-                <!-- Opción para cada escala disponible -->
-                <option value="{{ escala }}" {% if request.GET.escala == escala %}selected{% endif %}>{{ escala }}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <!-- Segunda fila con 3 recuadros -->
         <div class="col-md-3">
             <!-- Campo de selección para filtrar por categoría -->
-            <label for="categoria" class="form-label">Categoría:</label>
+            <!-- <label for="categoria" class="form-label">Categoría:</label> -->
             <select name="categoria" id="categoria" class="form-select">
-                <option value="">Selecciona una categoría</option>
+                <option value="">Género</option>
                 {% for categoria in categorias %}
                 <!-- Opción para cada categoría disponible -->
                 <option value="{{ categoria }}" {% if request.GET.categoria == categoria %}selected{% endif %}>{{ categoria }}</option>
@@ -51,43 +57,66 @@
             </select>
         </div>
         <div class="col-md-3">
-            <!-- Campo de texto para filtrar por propietario (nombre de usuario) -->
-            <label for="propietario" class="form-label">Propietario:</label>
-            <input type="text" name="propietario" id="propietario" class="form-control" value="{{ request.GET.propietario }}">
+            <!-- Campo de texto para filtrar por BPM mínimo -->
+            <!-- <label for="bpm_min" class="form-label">BPM Mínimo:</label> -->
+            <input type="number" placeholder="Instrumentos" name="bpm_min" id="bpm_min" class="form-control" value="{{ request.GET.bpm_min }}">
         </div>
         <div class="col-md-3">
-            <!-- Campo de selección para ordenar los resultados -->
+            <!-- Campo de texto para filtrar por BPM máximo -->
+            <!-- <label for="bpm_max" class="form-label">BPM Máximo:</label> -->
+            <input type="number" name="bpm_max" placeholder="Type" id="bpm_max" class="form-control" value="{{ request.GET.bpm_max }}">
+        </div>
+        <!-- <div class="col-md-3">
+           
+            <label for="escala" class="form-label">Escala:</label>
+            <select name="escala" id="escala" class="form-select">
+                <option value="">Selecciona una escala</option>
+                {% for escala in escalas %}
+               
+                <option value="{{ escala }}" {% if request.GET.escala == escala %}selected{% endif %}>{{ escala }}</option>
+                {% endfor %}
+            </select>
+        </div> -->
+
+        <!-- Segunda fila con 3 recuadros -->
+
+        <!-- <div class="col-md-3">
+ 
+            <label for="propietario" class="form-label">Propietario:</label>
+            <input type="text" name="propietario" id="propietario" class="form-control" value="{{ request.GET.propietario }}">
+        </div> -->
+        <!-- <div class="col-md-3">
+        
             <label for="ordenar_por" class="form-label">Ordenar por:</label>
             <select name="ordenar_por" id="ordenar_por" class="form-select">
                 <option value="">Selecciona una opción</option>
-                <!-- Opciones para ordenar por cantidad de likes, comentarios o fecha -->
+                
                 <option value="likes" {% if request.GET.ordenar_por == 'likes' %}selected{% endif %}>Cantidad de Likes</option>
                 <option value="comentarios" {% if request.GET.ordenar_por == 'comentarios' %}selected{% endif %}>Cantidad de Comentarios</option>
                 <option value="fecha" {% if request.GET.ordenar_por == 'fecha' %}selected{% endif %}>Fecha Reciente</option>
             </select>
-        </div>
+        </div> -->
 
         <!-- Tercera fila con el botón centrado -->
         <div class="col-12 mt-4 d-flex justify-content-center">
             <!-- Botón para aplicar los filtros -->
-            <button type="submit" class="btn btn-primary">Filtrar</button>
+            <button type="submit" class="btn">Filtrar</button>
         </div>
     </form>
 
     <!-- Lista de loops -->
-    <table class="table table-striped">
-        <thead>
+    <table>
+        <!-- <thead>
             <tr>
                 <th scope="col">Título</th>
-                <th scope="col">Descripción</th>
                 <th scope="col">BPM</th>
-                <th scope="col">Escala</th>
+                <th scope="col">Escala</th> 
                 <th scope="col">Categoría</th>
-                <th scope="col">Propietario</th>
+                 <th scope="col">Propietario</th> 
                 <th scope="col">Reproducir</th>
                 <th scope="col">Acciones</th>
             </tr>
-        </thead>
+        </thead> -->
         <tbody>
             <!-- Itera sobre cada loop disponible y genera una fila en la tabla -->
             {% for loop in loops %}
@@ -95,28 +124,44 @@
                 <!-- Muestra la imagen de perfil del propietario junto al título del loop -->
                 <td>
                     {% if loop.user.userprofile.profile_picture %}
-                        <img src="{{ loop.user.userprofile.profile_picture.url }}" class="img-thumbnail" style="width: 50px; height: 50px; margin-right: 10px;">
+                        <img src="{{ loop.user.userprofile.profile_picture.url }}" style="width: 50px; height: 50px; margin-right: 10px;">
                     {% else %}
-                        <img src="{% static 'default_profile.png' %}" class="img-thumbnail" style="width: 50px; height: 50px; margin-right: 10px;">
+                        <img src="{% static 'default_profile.png' %}" style="width: 50px; height: 50px; margin-right: 10px;">
                     {% endif %}
                     <a href="{% url 'loop_detail' loop.id %}">{{ loop.title }}</a>
                 </td>
-                <td>{{ loop.description }}</td>
-                <td>{{ loop.bpm }}</td>
-                <td>{{ loop.escala }}</td>
-                <td>{{ loop.categoria }}</td>
+                <!-- <td>{{ loop.categoria }}</td> -->
                 <!-- Enlace al perfil del propietario del loop -->
-                <td><a href="{% url 'profile' %}?user_id={{ loop.user.id }}">{{ loop.user.username }}</a></td>
-                <td>
-                    <!-- Reproductor de audio para el loop -->
+                <!-- <td><a href="{% url 'profile' %}?user_id={{ loop.user.id }}">{{ loop.user.username }}</a></td> -->
+                <!-- <td>
                     <audio controls class="audio-player">
                         <source src="{{ loop.file.url }}" type="audio/wav">
                         Tu navegador no soporta la reproducción de audio.
                     </audio>
+                </td> -->
+                <td>
+                    <span class="play-pause-btn material-symbols-outlined" data-loop-id="{{ loop.id }}">play_arrow</span>
                 </td>
                 <td>
-                    <!-- Botón para eliminar el loop, visible solo para el propietario -->
+                    <div class="waveform" data-url="{{ loop.file.url }}" data-loop-id="{{ loop.id }}"></div>
+                </td>
+                <td>{{ loop.bpm }} BPM</td>
+                <td>{{ loop.escala }}</td>
+
+                <!-- <td>
+                
                     <a href="{% url 'delete_loop' loop.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                </td> -->
+                <td>
+                    <span class="material-symbols-outlined">
+                        favorite
+                    </span>
+                    <span class="material-symbols-outlined">
+                        download
+                    </span>
+                    <span class="material-symbols-outlined">
+                        more_vert
+                    </span>
                 </td>
             </tr>
             {% endfor %}
@@ -126,6 +171,68 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+
+        const swiper = new Swiper('.mySwiper', {
+            slidesPerView: 6,  // Número de slides visibles al mismo tiempo
+            spaceBetween: 30,  // Espacio entre slides
+            loop: false,        // Permitir que el slider sea un carrusel continuo
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true, // Permitir clic en la paginación
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+        });
+
+        const waveforms = document.querySelectorAll('.waveform');
+
+        waveforms.forEach(waveform => {
+            const audioUrl = waveform.getAttribute('data-url'); // Obtener la URL del audio
+            const loopId = waveform.getAttribute('data-loop-id'); // Identificador del loop
+
+            // Crear una instancia de Wavesurfer
+            const wavesurfer = WaveSurfer.create({
+                container: waveform,
+                waveColor: '#4b209e',
+                progressColor: 'purple',
+                height: 70,
+                responsive: true,
+                cursorWidth: 0
+            });
+
+            // Cargar el archivo de audio en Wavesurfer
+            wavesurfer.load(audioUrl);
+
+            // Obtener el botón de reproducción/pausa asociado
+            const playPauseButton = document.querySelector(`.play-pause-btn[data-loop-id="${loopId}"]`);
+
+            // Función para actualizar el icono del botón
+            function updateIcon() {
+                if (wavesurfer.isPlaying()) {
+                    playPauseButton.innerText = 'pause';
+                } else {
+                    playPauseButton.innerText = 'play_arrow';
+                }
+            }
+
+            // Agregar evento de clic al botón de reproducción/pausa
+            playPauseButton.addEventListener('click', function() {
+                if (wavesurfer.isPlaying()) {
+                    wavesurfer.pause();
+                } else {
+                    wavesurfer.play();
+                }
+                updateIcon(); // Cambiar icono después de hacer clic
+            });
+
+            // Cambiar icono al final de la reproducción
+            wavesurfer.on('finish', function() {
+                updateIcon(); // Cambiar de vuelta a "play" cuando termine el audio
+            });
+        });
+
         const textElement = document.getElementById('loop-text');
         const text = "LISTA DE LOOPS";
         let index = 0;
