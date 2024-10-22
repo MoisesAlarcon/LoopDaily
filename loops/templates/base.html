@@ -69,21 +69,17 @@
                     {% else %}
                         <li class="nav-item">
                             <!-- Enlace a la pagina de inicio de sesion -->
-                            <a class="nav-link" href="{% url 'login' %}">Iniciar Sesion</a>
+                            <a class="nav-link" href="{% url 'login' %}">Log in</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item signup-btn">
                             <!-- Enlace a la pagina de registro -->
-                            <a class="nav-link" href="{% url 'signup' %}">Registrarse</a>
+                            <a class="nav-link" href="{% url 'signup' %}">Register</a>
                         </li>
                     {% endif %}
                 </ul>
             </div>
         </div>
     </nav>
-
-    <div class="title">
-        <h1>Loops & Samples</h1>
-    </div>
 
     <!-- Bloque opcional para mostrar una imagen en la parte superior de la pagina 
     {% block image %}

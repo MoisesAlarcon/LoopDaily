@@ -7,6 +7,11 @@
     <h1 id="loop-text" class="text-primary"></h1>
     -->
 </div>
+<div class="title">
+    <h1>Your next hit is <br>
+        a click away</h1>
+    <h2>Premium samples for producers. Less searching, more creating.</h2>
+</div>
 
 <div class="swiper mySwiper">
     <div class="swiper-wrapper">
@@ -22,9 +27,11 @@
           <img src="{% static 'default_profile.png' %}" alt="Default Profile Picture">
           {% endif %}
           <!-- Título del loop -->
-          <h4>{{ loop.title }}</h4>
+           <div class="overlay">
+            <h4>{{ loop.title }}</h4>
           <!-- Nombre del autor -->
           <p>{{ loop.user.username }}</p>
+           </div>
         </div>
       </div>
       {% endfor %}
@@ -143,7 +150,10 @@
                     <span class="play-pause-btn material-symbols-outlined" data-loop-id="{{ loop.id }}">play_arrow</span>
                 </td>
                 <td>
-                    <div class="waveform" data-url="{{ loop.file.url }}" data-loop-id="{{ loop.id }}"></div>
+                    <div class="waveform-container">
+                        <div class="waveform" data-url="{{ loop.file.url }}" data-loop-id="{{ loop.id }}"></div>
+                        <span class="audio-duration" id="duration-{{ loop.id }}"></span>
+                    </div>
                 </td>
                 <td>{{ loop.bpm }} BPM</td>
                 <td>{{ loop.escala }}</td>
@@ -226,6 +236,17 @@
                 }
                 updateIcon(); // Cambiar icono después de hacer clic
             });
+
+            wavesurfer.on('ready', function() {
+            const duration = wavesurfer.getDuration();
+            const durationElement = document.getElementById(`duration-${loopId}`);
+            if (durationElement) {
+                // Formatear la duración en minutos y segundos
+                const minutes = Math.floor(duration / 60);
+                const seconds = Math.floor(duration % 60).toString().padStart(2, '0');
+                durationElement.textContent = `${minutes}:${seconds}`;
+            }
+        });
 
             // Cambiar icono al final de la reproducción
             wavesurfer.on('finish', function() {

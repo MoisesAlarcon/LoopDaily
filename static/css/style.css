@@ -5,16 +5,46 @@ body {
 }
 .container {
     max-width: 1460px;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 .title {
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
 }
-
+.title h2 {
+    color: #d2d2d2;
+    font-size: 23px;
+    font-weight: 700;
+    margin-top: 34px;
+}
 h1 {
     color: white;
+    text-align: center;
     font-weight: 800;
+    font-size: 64px;
 }
+/* Estilo para el botón de "Registrarse" */
+.signup-btn {
+    display: inline-block;
+    background-color: #e9e8eb;
+    border-radius: 10px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+.signup-btn a {
+    color: #000 !important;
+}
+/* Ajustar el tamaño del botón y centrar el texto */
+.signup-btn:hover {
+    background-color: #f9f8f9;       /* Color más oscuro al pasar el ratón */
+    color: #fff;                     /* Texto en blanco al pasar el ratón */
+}
+
 .navbar-brand {
     font-weight: 800;
 }
@@ -39,7 +69,7 @@ h1 {
 .form-control {
     background-color: black;
     border-color: #4b209e;
-    width: 200px;
+    width: 390px;
     color: white;
 }
 input::placeholder {
@@ -70,7 +100,8 @@ input::placeholder {
 /* Estilos personalizados para tarjetas (card) */
 .card-custom {
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Añade una sombra para darle profundidad a la tarjeta */
-    border: none; /* Elimina cualquier borde por defecto de la tarjeta */
+    border-width: 3px;
+    border-color: #454545;
 }
 
 /* Estilos aplicados al cuerpo de las tarjetas dentro de .card-custom */
@@ -134,6 +165,16 @@ td a {
 .play-button {
     margin-left: 10px;
 }
+.waveform-container {
+    display: flex;
+    align-items: center;
+}
+.audio-duration {
+    margin-left: 24px;
+    font-size: 14px;
+    color: white;
+    font-weight: 700;     /* Color de la duración */
+}
 
 .waveform {
     width: 300px;
@@ -142,6 +183,7 @@ td a {
 .swiper {
     width: 100%;
     height: 255px;
+    margin-top: 90px;
   }
 
 .swiper-slide {
@@ -155,15 +197,27 @@ td a {
     align-items: center;
     background-color: #80808000;
     margin-right: 30px;
-    padding: 15px;
     border-radius: 5%;
 }
-
+.slide-content {
+    height: 100%;
+    position: relative;
+    border-radius: 8%;
+    overflow: hidden;
+}
 .slide-content img {
   display: block;
   width: 100%;
-  height: 160px;
-  object-fit: cover;                      
+  height: 100%;
+  object-fit: cover;   
+}
+.overlay {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    box-sizing: border-box;
+    background-color: #21201ead;
+    padding-left: 10px;
 }
 .slide-content h4 {
     color: white;
@@ -178,4 +232,37 @@ td a {
     font-size: 14px;
     margin-right: 0;
     text-align: left;
+}
+
+/* Estilos del formulario */
+
+.card {
+    background-color: #0a0a0a;
+}
+.card-body h2 {
+    text-align: center;
+        font-size: 47px;
+        color: #4b209e;
+        font-weight: 700;
+        margin-bottom: 36px;
+}
+.form {
+    margin-bottom: 7rem;
+}
+.form-inside {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.col-md-6 {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+.image {
+    width: 505px !important;
+}
+.upload {
+    width: 420px;
 }
